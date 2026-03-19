@@ -1,9 +1,9 @@
-# 🥩 [Nombre de tu App] - La Mejor Parrilla de Quilmes
+# 🥩 ParriYa - La Mejor Parrilla de Quilmes
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey.svg)
 
-Una aplicación móvil nativa diseñada para [Nombre de la Parrilla], ubicada en el corazón de Quilmes, Provincia de Buenos Aires. Esta app está pensada para agilizar la experiencia de nuestros clientes, permitiéndoles interactuar con el local de forma directa y sin intermediarios.
+Una aplicación móvil nativa diseñada para Parrilla Los Pibes, ubicada en la municipalidad de Quilmes, Provincia de Buenos Aires. Esta app está pensada para agilizar la experiencia de los clientes, permitiéndoles interactuar con el local de forma directa y sin intermediarios.
 
 ## 🚀 Características Principales
 
@@ -15,18 +15,16 @@ Una aplicación móvil nativa diseñada para [Nombre de la Parrilla], ubicada en
 
 ## 📱 Pantallas (Screenshots)
 
-*(Aquí puedes agregar imágenes de la interfaz de tu app)*
-
 | Inicio / Promociones | Menú Digital | Carrito / Retiro | Reserva de Mesa |
 |:---:|:---:|:---:|:---:|
 | ![Inicio](link-a-imagen) | ![Menu](link-a-imagen) | ![Carrito](link-a-imagen) | ![Reserva](link-a-imagen) |
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Frontend:** [Ej: React Native / Flutter / Swift / Kotlin]
-* **Backend:** [Ej: Node.js con Express / Firebase / Supabase]
-* **Base de Datos:** [Ej: MongoDB / PostgreSQL / Firestore]
-* **Autenticación:** [Ej: Firebase Auth / JWT]
+* **Frontend:** [React Native]
+* **Backend:** []
+* **Base de Datos:** [E]
+* **Autenticación:** []
 
 ## ⚙️ Instalación y Configuración Local
 
