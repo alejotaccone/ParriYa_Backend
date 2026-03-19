@@ -29,4 +29,4 @@ Si deseas correr este proyecto en tu entorno local, sigue estos pasos:
 
 1. Clonar el repositorio:
    ```bash
-   git clone [https://github.com/alejotaccone/ParriYa_Backend.git](https://github.com/alejotaccone/ParriYa_Backend.git)
+   git clone https://github.com/alejotaccone/ParriYa_Backend.git
