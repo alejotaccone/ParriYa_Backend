@@ -1,30 +1,27 @@
-# 🥩 ParriYa - La Mejor Parrilla de Quilmes
+# 🥩 ParriYa - Backend API
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20Android-lightgrey.svg)
+![Version](https://img.shields.io/badge/version-0.0.0-blue.svg)
+![Status](https://img.shields.io/badge/status-En%20Desarrollo-orange.svg)
 
-Una aplicación móvil nativa diseñada para Parrilla Los Pibes, ubicada en la municipalidad de Quilmes, Provincia de Buenos Aires. Esta app está pensada para agilizar la experiencia de los clientes, permitiéndoles interactuar con el local de forma directa y sin intermediarios.
+Este repositorio contiene el código fuente del servidor (Backend) y la API RESTful para **ParriYa**, la aplicación móvil de la mejor parrilla de Quilmes, Provincia de Buenos Aires. 
 
-## 🚀 Características Principales
+El sistema gestiona la lógica de negocio para el menú digital, la recepción de pedidos con modalidad exclusiva de retiro en el local (Takeaway) y la gestión de reservas de mesas.
 
-* 📖 **Menú Digital Interactivo:** Exploración completa de nuestra carta (cortes de carne, achuras, guarniciones, bebidas y postres) con precios actualizados y fotos de los platos.
-* 🛍️ **Pedidos para Retirar (Takeaway):** Los clientes pueden armar su pedido desde la app y programar el horario de retiro por el local. 
-    > ⚠️ **Nota Importante:** Esta aplicación opera exclusivamente bajo la modalidad *Takeaway*. **No realizamos envíos a domicilio (Delivery).**
-* 📅 **Reserva de Mesas:** Sistema integrado para seleccionar día, horario y cantidad de comensales para asegurar tu lugar en el salón.
-* 🔔 **Notificaciones Push:** Avisos en tiempo real cuando el pedido está listo para ser retirado en el mostrador o confirmaciones de reservas.
+## 🚀 Características y Endpoints Principales
 
-## 📱 Pantallas (Screenshots)
+La API soporta las siguientes funcionalidades centrales para la app móvil:
 
-| Inicio / Promociones | Menú Digital | Carrito / Retiro | Reserva de Mesa |
-|:---:|:---:|:---:|:---:|
-| ![Inicio](link-a-imagen) | ![Menu](link-a-imagen) | ![Carrito](link-a-imagen) | ![Reserva](link-a-imagen) |
+* 📖 **Gestión de Menú:** Endpoints para consultar, agregar y actualizar platos, cortes de carne, bebidas y precios.
+* 🛍️ **Sistema de Pedidos (Takeaway):** Lógica para procesar carritos de compras y programar horarios de retiro.
+* 📅 **Motor de Reservas:** Gestión de disponibilidad de mesas, turnos y cantidad de comensales.
+* 👥 **Gestión de Usuarios:** Autenticación y perfiles de clientes.
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **Frontend:** [React Native]
-* **Backend:** []
-* **Base de Datos:** [E]
-* **Autenticación:** []
+* **Lenguaje / Framework:** [ Java con Spring Boot ]
+* **Base de Datos:** [ MySQL ]
+* **Autenticación:** [ JWT (JSON Web Tokens) ]
+* **Documentación de API:** [ Swagger]
 
 ## ⚙️ Instalación y Configuración Local
 
@@ -32,4 +29,4 @@ Si deseas correr este proyecto en tu entorno local, sigue estos pasos:
 
 1. Clonar el repositorio:
    ```bash
-   git clone [https://github.com/tu-usuario/tu-repo-parrilla.git](https://github.com/tu-usuario/tu-repo-parrilla.git)
+   git clone [https://github.com/alejotaccone/ParriYa_Backend.git](https://github.com/alejotaccone/ParriYa_Backend.git)
