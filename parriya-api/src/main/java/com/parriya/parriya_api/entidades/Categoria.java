@@ -1,21 +1,19 @@
 package com.parriya.parriya_api.entidades;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
+import java.util.List;
 
 @Data
 @Entity
-
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoria_id;
 
-    
+    private String nombre;
+    private String descripcion;
+
+    @OneToMany(mappedBy = "categoria")
+    private List<Producto> productos;
 }
