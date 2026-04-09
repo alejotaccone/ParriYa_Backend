@@ -8,7 +8,7 @@ import lombok.Data;
 public class DetallePedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long detallePedido_id;
+    private Long id;
 
     private int cantidad;
     private double precio_unitario;

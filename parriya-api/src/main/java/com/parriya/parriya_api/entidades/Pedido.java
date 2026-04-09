@@ -10,7 +10,7 @@ import java.util.List;
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pedido_id;
+    private Long id;
 
     
 

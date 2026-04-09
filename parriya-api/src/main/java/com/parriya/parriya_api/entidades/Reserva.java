@@ -9,7 +9,7 @@ import java.util.Date;
 public class Reserva {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long reserva_id;
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "usuario_id", nullable = false)

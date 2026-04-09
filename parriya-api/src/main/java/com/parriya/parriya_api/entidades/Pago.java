@@ -9,7 +9,7 @@ import java.util.Date;
 public class Pago {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long pago_id;
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "pedido_id", nullable = false)
