@@ -1,5 +1,15 @@
 package com.parriya.parriya_api.repository;
 
-public class PedidoRepository {
-    
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.parriya.parriya_api.entidades.Pedido;
+
+@Repository
+public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+    List<Pedido> findByUsuarioId(Long id);
+    Optional<List<Pedido>> findByEstado(String estado);
 }

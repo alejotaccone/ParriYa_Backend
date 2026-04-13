@@ -13,7 +13,6 @@ public class DetallePedido {
     private int cantidad;
     private double precio_unitario;
 
-
     //Relaciones
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
