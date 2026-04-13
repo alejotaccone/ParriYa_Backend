@@ -40,9 +40,8 @@ public class CategoriaController {
     }   
     
     // Endpoint para crear una categorias
-    @PostMapping("/categorias")
+    @PostMapping
     public ResponseEntity<CategoriaResponse> createCategoria(@RequestBody CategoriaRequest categoriaRequest) {
-        // Ahora le pasamos el objeto request entero, tal como lo definiste en el Service
         CategoriaResponse response = categoriaService.createCategoria(categoriaRequest);
         return ResponseEntity.ok(response);
     }
@@ -53,7 +52,6 @@ public class CategoriaController {
             @PathVariable Long id,
             @RequestBody CategoriaRequest categoriaRequest) {
         try {
-            // Ahora le pasamos el ID y el objeto request entero
             CategoriaResponse updated = categoriaService.updateCategoria(id, categoriaRequest);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {

@@ -26,7 +26,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     // Endpoint para registrar un nuevo usuario
-    @PostMapping("/registro")
+    @PostMapping
     public ResponseEntity<Object> registrarUsuario(@RequestBody UsuarioRequest request) {
         try {
             UsuarioResponse response = usuarioService.registrarUsuario(request);

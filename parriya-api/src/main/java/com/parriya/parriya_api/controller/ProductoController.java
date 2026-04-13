@@ -43,7 +43,7 @@ public class ProductoController {
     }
 
     // Endpoint para crear un producto
-    @PostMapping("/prodcutos")
+    @PostMapping
     public ResponseEntity<ProductoResponse> createProducto(@RequestBody ProductoRequest productoRequest){
         ProductoResponse response = productoService.createProducto(productoRequest);
         return ResponseEntity.ok(response);

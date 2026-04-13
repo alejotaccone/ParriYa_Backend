@@ -27,8 +27,13 @@ public class ProductoService {
     public ProductoResponse createProducto(ProductoRequest request){
         Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
                 .orElseThrow(() -> new RuntimeException("Categoria no encontrada"));
-        Producto nuevoProducto = new Producto(request.getNombre(),request.getDescripcion(),request.getPrecio(),
-        request.getStock(),request.getImgUrl(),categoria);
+        Producto nuevoProducto = new Producto(
+            request.getNombre(),
+            request.getDescripcion(),
+            request.getPrecio(),
+            request.getStock(),
+            request.getImgUrl(),
+            categoria);
         Producto guardada = productoRepository.save(nuevoProducto);
         return mapearAResponse(guardada);
     }
@@ -78,6 +83,9 @@ public class ProductoService {
         response.setStock(producto.getStock());
         response.setEstado(true);
         response.setImgUrl(producto.getImgUrl());
+        if (producto.getCategoria() != null) {
+        response.setCategoriaId(producto.getCategoria().getId());
+        }
         return response;
     }
 }
