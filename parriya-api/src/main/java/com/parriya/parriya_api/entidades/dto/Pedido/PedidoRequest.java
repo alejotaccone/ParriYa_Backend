@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import com.parriya.parriya_api.entidades.DetallePedido;
+import com.parriya.parriya_api.entidades.dto.DetallePedido.DetallePedidoRequest;
 
 import lombok.Data;
 
@@ -12,5 +13,5 @@ public class PedidoRequest {
     private Long usuarioId;
     private LocalTime horarioRetiro;
     private double total;
-    private List<DetallePedido> detalles;
+    private List<DetallePedidoRequest> detalles;
 }

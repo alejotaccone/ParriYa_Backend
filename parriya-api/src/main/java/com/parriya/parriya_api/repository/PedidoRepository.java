@@ -10,6 +10,5 @@ import com.parriya.parriya_api.entidades.Pedido;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    List<Pedido> findByUsuarioId(Long id);
-    Optional<List<Pedido>> findByEstado(String estado);
+
 }

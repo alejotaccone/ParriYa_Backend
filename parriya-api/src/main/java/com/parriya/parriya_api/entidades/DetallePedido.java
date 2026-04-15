@@ -12,6 +12,8 @@ public class DetallePedido {
 
     private int cantidad;
     private double precio_unitario;
+    private double subtotal;
+
 
     //Relaciones
     @ManyToOne
