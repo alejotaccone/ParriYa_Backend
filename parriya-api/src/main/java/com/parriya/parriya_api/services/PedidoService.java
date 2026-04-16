@@ -34,6 +34,9 @@ public class PedidoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PagoService pagoService;
+
     @Transactional
     public PedidoResponse crearPedido(PedidoRequest request) {
         // 1. Validar cliente
@@ -63,20 +66,38 @@ public class PedidoService {
             double subtotal = producto.getPrecio() * item.getCantidad();
             detalle.setSubtotal(subtotal);
             
-            // Vinculación para el Cascade
             detalle.setPedido(pedido);
 
             totalPedido += subtotal;
             detalles.add(detalle);
         }
 
-        // 4. Cerrar pedido y guardar
-        pedido.setDetalles(detalles);
-        pedido.setTotal(totalPedido);
+        List<Pago> pagosAprobados = pagoService.procesarPagos(request.getPagos(), totalPedido, pedido);
 
+        // Se lo seteás al pedido directamente
+        pedido.setPagos(pagosAprobados);
+        pedido.setTotal(totalPedido);
         Pedido guardado = pedidoRepository.save(pedido);
 
         return mapearAResponse(guardado);
+    }
+
+    // Para ver el detalle exacto de una venta (ej: cuando el cliente va a pagar)
+    public PedidoResponse obtenerPedidoPorId(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+        return mapearAResponse(pedido);
+    }
+
+    // Para la pantalla del cocinero o el administrador
+    public List<PedidoResponse> obtenerPedidosPorEstado(String estado) {
+        List<Pedido> pedidos = pedidoRepository.findByEstado(estado.toUpperCase());
+        
+        List<PedidoResponse> respuestas = new ArrayList<>();
+        for (Pedido p : pedidos) {
+            respuestas.add(mapearAResponse(p));
+        }
+        return respuestas;
     }
 
     @Transactional
@@ -123,18 +144,11 @@ public class PedidoService {
         }
         response.setDetalles(detallesDTO);
 
-        // Mapeo manual de Pagos
+        // Mapeo de Pagos
         List<PagoResponse> pagosDTO = new ArrayList<>();
         if (pedido.getPagos() != null) {
             for (Pago pago : pedido.getPagos()) {
-                PagoResponse pRes = new PagoResponse();
-                pRes.setId(pago.getId());
-                pRes.setMetodo(pago.getMetodo());
-                pRes.setMonto(pago.getMonto());
-                pRes.setMoneda(pago.getMoneda());
-                pRes.setEstado(pago.getEstado());
-                pRes.setFecha_pago((java.sql.Date) pago.getFecha_pago());
-                pagosDTO.add(pRes);
+                pagosDTO.add(pagoService.mapearAResponse(pago));
             }
         }
         response.setPagos(pagosDTO);

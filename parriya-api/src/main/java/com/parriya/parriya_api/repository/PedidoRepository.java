@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.parriya.parriya_api.entidades.Pedido;
+import com.parriya.parriya_api.entidades.Usuario;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+        List<Pedido> findByEstado(String estado);
 
 }
