@@ -47,7 +47,7 @@ public class PagoService {
     pRes.setMonto(pago.getMonto());
     pRes.setMoneda(pago.getMoneda());
     pRes.setEstado(pago.getEstado());
-    pRes.setFecha_pago((java.sql.Date) pago.getFecha_pago());
+    pRes.setFecha_pago(pago.getFecha_pago());
     return pRes;
     }
 }

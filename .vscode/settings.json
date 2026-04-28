@@ -1,3 +1,11 @@
 {
-    "java.compile.nullAnalysis.mode": "disabled"
+  "java.compile.nullAnalysis.mode": "disabled",
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-25",
+      "path": "C:\\Users\\alejo\\.jdk\\jdk-25",
+      "default": true
+    }
+  ]
 }

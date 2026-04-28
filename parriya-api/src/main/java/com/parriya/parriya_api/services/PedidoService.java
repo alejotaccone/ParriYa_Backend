@@ -72,6 +72,9 @@ public class PedidoService {
             detalles.add(detalle);
         }
 
+        // Asignar detalles al pedido antes de guardar
+        pedido.setDetalles(detalles);
+
         List<Pago> pagosAprobados = pagoService.procesarPagos(request.getPagos(), totalPedido, pedido);
 
         // Se lo seteás al pedido directamente
@@ -128,18 +131,11 @@ public class PedidoService {
         response.setEstado(pedido.getEstado());
         response.setTotal(pedido.getTotal());
 
-        // Mapeo manual de Detalles
+        // Mapeo de Detalles
         List<DetallePedidoResponse> detallesDTO = new ArrayList<>();
         if (pedido.getDetalles() != null) {
             for (DetallePedido det : pedido.getDetalles()) {
-                DetallePedidoResponse detDTO = new DetallePedidoResponse();
-                detDTO.setId(det.getId());
-                detDTO.setProductoId(det.getProducto().getId());
-                detDTO.setCantidad(det.getCantidad());
-                detDTO.setNombreProducto(det.getProducto().getNombre());
-                detDTO.setPrecioUnitario(det.getPrecio_unitario());
-                detDTO.setSubtotal(det.getSubtotal());
-                detallesDTO.add(detDTO);
+                detallesDTO.add(mapearDetalleAResponse(det));
             }
         }
         response.setDetalles(detallesDTO);
@@ -148,11 +144,26 @@ public class PedidoService {
         List<PagoResponse> pagosDTO = new ArrayList<>();
         if (pedido.getPagos() != null) {
             for (Pago pago : pedido.getPagos()) {
-                pagosDTO.add(pagoService.mapearAResponse(pago));
+                pagosDTO.add(mapearPagoAResponse(pago));
             }
         }
         response.setPagos(pagosDTO);
 
         return response;
+    }
+
+    private DetallePedidoResponse mapearDetalleAResponse(DetallePedido detalle) {
+        DetallePedidoResponse detDTO = new DetallePedidoResponse();
+        detDTO.setId(detalle.getId());
+        detDTO.setProductoId(detalle.getProducto().getId());
+        detDTO.setCantidad(detalle.getCantidad());
+        detDTO.setNombreProducto(detalle.getProducto().getNombre());
+        detDTO.setPrecioUnitario(detalle.getPrecio_unitario());
+        detDTO.setSubtotal(detalle.getSubtotal());
+        return detDTO;
+    }
+
+    private PagoResponse mapearPagoAResponse(Pago pago) {
+        return pagoService.mapearAResponse(pago);
     }
 }
