@@ -1,6 +1,8 @@
 
 package com.parriya.parriya_api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import com.parriya.parriya_api.services.UsuarioService;
 
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.parriya.parriya_api.entidades.dto.Producto.ProductoResponse;
 import com.parriya.parriya_api.entidades.dto.Usuario.CambiarPasswordRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UpdatePerfilRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioRequest;
@@ -68,5 +71,19 @@ public class UsuarioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    // Endpoint para prender/apagar el favorito
+    @PostMapping("/{usuarioId}/favoritos/{productoId}")
+    public ResponseEntity<String> gestionarFavorito(@PathVariable Long usuarioId, @PathVariable Long productoId) {
+        usuarioService.toggleFavorito(usuarioId, productoId);
+        return ResponseEntity.ok("Lista de favoritos actualizada con éxito");
+    }
+
+    // Endpoint para mostrar favoritos
+    @GetMapping("/{usuarioId}/favoritos")
+    public ResponseEntity<List<ProductoResponse>> obtenerFavoritos(@PathVariable Long usuarioId) {
+        List<ProductoResponse> favoritos = usuarioService.obtenerFavoritos(usuarioId);
+        return ResponseEntity.ok(favoritos);
     }
 }

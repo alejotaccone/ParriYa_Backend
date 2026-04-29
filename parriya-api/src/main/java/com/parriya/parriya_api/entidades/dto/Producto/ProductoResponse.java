@@ -11,6 +11,5 @@ public class ProductoResponse {
     private int stock;
     private boolean estado;
     private String imgUrl;
-    
     private Long categoriaId;
 }

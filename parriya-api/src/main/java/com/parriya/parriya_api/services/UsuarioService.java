@@ -1,17 +1,23 @@
 package com.parriya.parriya_api.services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.parriya.parriya_api.entidades.Producto;
 import com.parriya.parriya_api.entidades.Usuario;
 
 import com.parriya.parriya_api.entidades.dto.Usuario.UpdatePerfilRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioResponse;
+import com.parriya.parriya_api.entidades.dto.Producto.ProductoResponse;
 import com.parriya.parriya_api.entidades.dto.Usuario.CambiarPasswordRequest;
+import com.parriya.parriya_api.repository.ProductoRepository;
 import com.parriya.parriya_api.repository.UsuarioRepository;
 
 @Service
@@ -19,6 +25,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProductoRepository productoRepository;
 
     // Registrar un nuevo usuario
     public UsuarioResponse registrarUsuario(UsuarioRequest request) throws Exception {
@@ -76,6 +85,46 @@ public class UsuarioService {
 
         usuario.setPassword_hash(request.getPasswordNuevo());
         usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public void toggleFavorito(Long usuarioId, Long productoId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                
+        Producto producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        // Si el producto ya está en la lista lo saca, si no se agrega.
+        if (usuario.getProductosFavoritos().contains(producto)) {
+            usuario.getProductosFavoritos().remove(producto);
+        } else {
+            usuario.getProductosFavoritos().add(producto);
+        }
+
+        usuarioRepository.save(usuario);
+    }
+    public List<ProductoResponse> obtenerFavoritos(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                
+        List<ProductoResponse> favoritosDTO = new ArrayList<>();
+        
+        for (Producto p : usuario.getProductosFavoritos()) {
+            ProductoResponse pRes = new ProductoResponse();
+            pRes.setId(p.getId());
+            pRes.setNombre(p.getNombre());
+            pRes.setDescripcion(p.getDescripcion());
+            pRes.setPrecio(p.getPrecio());
+            pRes.setStock(p.getStock());
+            pRes.setEstado(p.isEstado());
+            pRes.setImgUrl(p.getImgUrl());
+            pRes.setCategoriaId(p.getCategoria().getId());
+            
+            favoritosDTO.add(pRes);
+        }
+        
+        return favoritosDTO;
     }
 
     // Método de mapeo interno (Filtrando el password)

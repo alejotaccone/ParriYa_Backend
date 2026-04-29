@@ -2,6 +2,8 @@ package com.parriya.parriya_api.entidades;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +29,12 @@ public class Usuario {
 
 	private String rol;
 
-	// Relaciones
-	@OneToMany(mappedBy = "usuario")
-	private List<Reserva> reservas;
 
-	@OneToMany(mappedBy = "usuario")
-	private List<Favoritos> favoritos;
+	@ManyToMany
+    @JoinTable(
+        name = "usuario_favoritos",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "producto_id")
+    )
+    private List<Producto> productosFavoritos = new ArrayList<>();
 }
