@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.parriya.parriya_api.entidades.Feedback;
 import com.parriya.parriya_api.entidades.Pedido;
 import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackRequest;
+import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackResponse;
 import com.parriya.parriya_api.repository.FeedbackRepository;
 import com.parriya.parriya_api.repository.PedidoRepository;
 
@@ -55,11 +57,31 @@ public class FeedbackService {
     }
 
     // Método para el Dashboard del Admin
-    public List<Feedback> obtenerFeedbackReciente() {
-        return feedbackRepository.findTop3ByOrderByFechaDesc();
+    public List<FeedbackResponse> obtenerFeedbackReciente() {
+        List<Feedback> feedbacks = feedbackRepository.findTop3ByOrderByFechaDesc();
+        return mapearLista(feedbacks);
     }
 
-    public List<Feedback> obtenerTodosLosFeedbacks() {
-        return feedbackRepository.findAllByOrderByFechaDesc();
+    public List<FeedbackResponse> obtenerTodosLosFeedbacks() {
+        List<Feedback> feedbacks = feedbackRepository.findAllByOrderByFechaDesc();
+        return mapearLista(feedbacks);
+    }
+
+    // EL TRADUCTOR 
+    private List<FeedbackResponse> mapearLista(List<Feedback> feedbacks) {
+        List<FeedbackResponse> respuestas = new ArrayList<>();
+        for (Feedback f : feedbacks) {
+            FeedbackResponse dto = new FeedbackResponse();
+            dto.setId(f.getId());
+            dto.setComentario(f.getComentario());
+            dto.setCalificacion(f.getCalificacion());
+            dto.setFecha(f.getFecha());
+            // Extraemos los datos precisos sin traer todo el objeto Pedido/Usuario
+            dto.setPedidoId(f.getPedido().getId());
+            dto.setNombreCliente(f.getPedido().getUsuario().getNombre());
+            
+            respuestas.add(dto);
+        }
+        return respuestas;
     }
 }

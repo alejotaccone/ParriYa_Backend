@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackRequest;
+import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackResponse;
 import com.parriya.parriya_api.entidades.Feedback;
 import com.parriya.parriya_api.services.*;
 
@@ -32,13 +33,13 @@ public class FeedbackController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Feedback>> verTodos() {
-        return ResponseEntity.ok(feedbackService.obtenerTodosLosFeedbacks());
+    @GetMapping("/recientes")
+    public ResponseEntity<List<FeedbackResponse>> verRecientes() {
+        return ResponseEntity.ok(feedbackService.obtenerFeedbackReciente());
     }
 
-    @GetMapping("/recientes")
-    public ResponseEntity<List<Feedback>> verRecientes() {
-        return ResponseEntity.ok(feedbackService.obtenerFeedbackReciente());
+    @GetMapping
+    public ResponseEntity<List<FeedbackResponse>> verTodos() {
+        return ResponseEntity.ok(feedbackService.obtenerTodosLosFeedbacks());
     }
 }
