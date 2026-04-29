@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,7 @@ public class ProductoController {
     }
 
     // Endpoint para crear un producto
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductoResponse> createProducto(@RequestBody ProductoRequest productoRequest){
         ProductoResponse response = productoService.createProducto(productoRequest);
@@ -50,6 +52,7 @@ public class ProductoController {
     }
 
     // Endpoint para actualizar un producto
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductoResponse> updateProducto(@PathVariable Long id, @RequestBody ProductoRequest productoRequest) {
         try {
@@ -60,7 +63,8 @@ public class ProductoController {
         }
     }
 
-    // Endpoint para eliminar un producto por su ID   
+    // Endpoint para eliminar un producto por su ID
+    @PreAuthorize("hasRole('ADMIN')")   
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProducto(@PathVariable Long id) {
         Optional<ProductoResponse> producto = productoService.getProductoPorId(id);

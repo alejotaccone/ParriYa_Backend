@@ -1,6 +1,7 @@
 package com.parriya.parriya_api.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -9,10 +10,12 @@ import java.util.List;
 
 import com.parriya.parriya_api.entidades.Feedback;
 import com.parriya.parriya_api.entidades.Pedido;
+import com.parriya.parriya_api.entidades.Usuario;
 import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackRequest;
 import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackResponse;
 import com.parriya.parriya_api.repository.FeedbackRepository;
 import com.parriya.parriya_api.repository.PedidoRepository;
+import com.parriya.parriya_api.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -25,28 +28,34 @@ public class FeedbackService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository; // <-- Agregamos el repositorio de usuarios
+
     @Transactional
     public Feedback registrarFeedback(FeedbackRequest request) {
-        // 1. ¿Existe el pedido?
+        
+        // 1. Obtenemos el email del usuario desde el Token
+        String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // 2. Buscamos el pedido al que le quieren dejar la reseña
         Pedido pedido = pedidoRepository.findById(request.getPedidoId())
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
-        // 2. ¿El pedido es del usuario que intenta opinar?
-        if (!pedido.getUsuario().getId().equals(request.getUsuarioId())) {
-            throw new RuntimeException("Solo el dueño del pedido puede dejar feedback");
+        // 3. SEGURIDAD: Comparamos el ID del dueño del pedido con el ID del usuario del Token
+        if (!pedido.getUsuario().getId().equals(usuarioAutenticado.getId())) {
+            throw new RuntimeException("Acceso denegado: Solo el dueño del pedido puede dejar feedback");
         }
 
-        // 3. ¿El pedido ya fue entregado?
         if (!pedido.getEstado().equals("ENTREGADO")) {
             throw new RuntimeException("Solo podés dejar feedback de pedidos entregados");
         }
 
-        // 4. ¿Ya dejó feedback antes para este pedido?
         if (feedbackRepository.existsByPedidoId(request.getPedidoId())) {
             throw new RuntimeException("Ya existe una reseña para este pedido");
         }
 
-        // Si pasó todo, guardamos
         Feedback feedback = new Feedback();
         feedback.setPedido(pedido);
         feedback.setComentario(request.getComentario());

@@ -1,11 +1,11 @@
 package com.parriya.parriya_api.services;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +13,6 @@ import com.parriya.parriya_api.entidades.Producto;
 import com.parriya.parriya_api.entidades.Usuario;
 
 import com.parriya.parriya_api.entidades.dto.Usuario.UpdatePerfilRequest;
-import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioResponse;
 import com.parriya.parriya_api.entidades.dto.Producto.ProductoResponse;
 import com.parriya.parriya_api.entidades.dto.Usuario.CambiarPasswordRequest;
@@ -29,36 +28,20 @@ public class UsuarioService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // Registrar un nuevo usuario
-    public UsuarioResponse registrarUsuario(UsuarioRequest request) throws Exception {
-        
-        Optional<Usuario> usuarioExistente = usuarioRepository.findByEmail(request.getEmail());
-        if (usuarioExistente.isPresent()) {
-            throw new Exception("El correo ya está registrado en ParriYa!");
-        }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombre(request.getNombre());
-        nuevoUsuario.setEmail(request.getEmail());
-        nuevoUsuario.setTelefono(request.getTelefono());
-        nuevoUsuario.setPassword_hash(request.getPassword()); //Falta encriptar
-        nuevoUsuario.setFecha_registro(new Date());
-        nuevoUsuario.setRol("CLIENTE");
-
-        Usuario guardado = usuarioRepository.save(nuevoUsuario);
-        return mapearAResponse(guardado);
+    // Obtener "Mi Perfil" buscando por email
+    public Optional<UsuarioResponse> getMiPerfil(String email) {
+        return usuarioRepository.findByEmail(email).map(this::mapearAResponse);
     }
 
-    // Obtener usuario por ID 
-    public Optional<UsuarioResponse> getUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id).map(this::mapearAResponse);
-    }
-
-    // Actualizar datos de contacto
-    public UsuarioResponse updatePerfil(Long id, UpdatePerfilRequest request) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id)
+    // Actualizar datos de contacto del usuario logueado
+    public UsuarioResponse updatePerfil(String email, UpdatePerfilRequest request) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
+        // Si intenta cambiar su email por uno nuevo, validamos que no esté en uso
         if (!usuario.getEmail().equals(request.getEmail())) {
             Optional<Usuario> emailOcupado = usuarioRepository.findByEmail(request.getEmail());
             if (emailOcupado.isPresent()) {
@@ -74,22 +57,24 @@ public class UsuarioService {
         return mapearAResponse(guardado);
     }
 
-    // Cambiar la contraseña
-    public void updatePassword(Long id, CambiarPasswordRequest request) throws Exception {
-        Usuario usuario = usuarioRepository.findById(id)
+    // Cambiar la contraseña validando la encriptación
+    public void updatePassword(String email, CambiarPasswordRequest request) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        if (!usuario.getPassword_hash().equals(request.getPasswordActual())) {
+        // Comparamos la contraseña plana que manda el usuario con el Hash de la BD
+        if (!passwordEncoder.matches(request.getPasswordActual(), usuario.getPassword_hash())) {
             throw new Exception("La contraseña actual es incorrecta.");
         }
 
-        usuario.setPassword_hash(request.getPasswordNuevo());
+        // Si es correcta, encriptamos la nueva y la guardamos
+        usuario.setPassword_hash(passwordEncoder.encode(request.getPasswordNuevo()));
         usuarioRepository.save(usuario);
     }
 
     @Transactional
-    public void toggleFavorito(Long usuarioId, Long productoId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+    public void toggleFavorito(String email, Long productoId) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 
         Producto producto = productoRepository.findById(productoId)
@@ -104,8 +89,9 @@ public class UsuarioService {
 
         usuarioRepository.save(usuario);
     }
-    public List<ProductoResponse> obtenerFavoritos(Long usuarioId) {
-        Usuario usuario = usuarioRepository.findById(usuarioId)
+
+    public List<ProductoResponse> obtenerFavoritos(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                 
         List<ProductoResponse> favoritosDTO = new ArrayList<>();

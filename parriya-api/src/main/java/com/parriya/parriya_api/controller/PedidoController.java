@@ -7,6 +7,8 @@ import com.parriya.parriya_api.services.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class PedidoController {
 
 
     // Endpoint para traer todos los pedidos ordenados
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> obtenerTodos() {
         return new ResponseEntity<>(pedidoService.obtenerTodosLosPedidos(), HttpStatus.OK);
@@ -39,19 +42,24 @@ public class PedidoController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<PedidoResponse>> obtenerMisPedidos(@PathVariable Long usuarioId) {
-        List<PedidoResponse> respuestas = pedidoService.obtenerPedidosPorUsuario(usuarioId);
+    // Ya no pedimos el {usuarioId} en el path, es una ruta genérica
+    @GetMapping("/mis-pedidos")
+    public ResponseEntity<List<PedidoResponse>> obtenerMisPedidos() {
+        String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        List<PedidoResponse> respuestas = pedidoService.obtenerMisPedidos(emailAutenticado);
         return new ResponseEntity<>(respuestas, HttpStatus.OK);
     }
 
     // 3. Traer la lista de pedidos según su estado (Para la tablet de la cocina)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<PedidoResponse>> obtenerPedidosPorEstado(@PathVariable String estado) {
         List<PedidoResponse> respuestas = pedidoService.obtenerPedidosPorEstado(estado);
         return new ResponseEntity<>(respuestas, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/dashboard")
     public ResponseEntity<List<PedidoDashboardResponse>> obtenerUltimosPedidosDashboard() {
         List<PedidoDashboardResponse> respuestas = pedidoService.obtenerUltimosPedidos();
@@ -68,6 +76,7 @@ public class PedidoController {
 
 
     //Confirmar entrega de un pedido
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/entregar")
     public ResponseEntity<PedidoResponse> entregarPedido(@PathVariable Long id) {
         // Nota: Si implementaste el manejador global de errores, este código queda así de limpio

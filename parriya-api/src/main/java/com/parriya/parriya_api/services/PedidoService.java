@@ -23,6 +23,8 @@ import com.parriya.parriya_api.repository.PedidoRepository;
 import com.parriya.parriya_api.repository.ProductoRepository;
 import com.parriya.parriya_api.repository.UsuarioRepository;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @Service
 public class PedidoService {
 
@@ -40,13 +42,16 @@ public class PedidoService {
 
     @Transactional
     public PedidoResponse crearPedido(PedidoRequest request) {
-        // 1. Validar cliente
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // 1. Obtenemos el email del usuario autenticado leyendo el Token
+        String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. Inicializar pedido
+        // 2. Buscamos a ese usuario real en la base de datos
+        Usuario usuario = usuarioRepository.findByEmail(emailAutenticado)
+                .orElseThrow(() -> new RuntimeException("Usuario no autenticado o no encontrado"));
+
+        // 3. Inicializar pedido
         Pedido pedido = new Pedido();
-        pedido.setUsuario(usuario);
+        pedido.setUsuario(usuario); // ¡Se asigna el usuario del token, sin importar el ID del Request!
         pedido.setFecha_pedido(new Date());
         pedido.setHorario_retiro(request.getHorarioRetiro());
         pedido.setEstado("PENDIENTE");
@@ -54,7 +59,7 @@ public class PedidoService {
         double totalPedido = 0;
         List<DetallePedido> detalles = new ArrayList<>();
 
-        // 3. Procesar lista de productos
+        // 4. Procesar lista de productos
         for (DetallePedidoRequest item : request.getDetalles()) {
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -97,11 +102,15 @@ public class PedidoService {
         return respuestas;
     }
 
-    public List<PedidoResponse> obtenerPedidosPorUsuario(Long usuarioId) {
-        // 1. Buscamos en la DB
-        List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByIdDesc(usuarioId);
+    public List<PedidoResponse> obtenerMisPedidos(String email) {
+        // 1. Buscamos al usuario por su email seguro
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // 2. Buscamos en la DB usando el ID real de ese usuario
+        List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByIdDesc(usuario.getId());
         
-        // 2. Mapeamos a la lista de respuestas
+        // 3. Mapeamos a la lista de respuestas
         List<PedidoResponse> respuestas = new ArrayList<>();
         for (Pedido p : pedidos) {
             respuestas.add(mapearAResponse(p));
@@ -112,6 +121,18 @@ public class PedidoService {
     public PedidoResponse obtenerPedidoPorId(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+
+        String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado)
+                .orElseThrow(() -> new RuntimeException("Usuario no autenticado"));
+
+        boolean esAdmin = usuarioAutenticado.getRol().equals("ADMIN");
+        boolean esDuenioDelPedido = pedido.getUsuario().getId().equals(usuarioAutenticado.getId());
+
+        if (!esAdmin && !esDuenioDelPedido) {
+            throw new RuntimeException("Acceso denegado: No tienes permiso para ver este pedido");
+        }
+
         return mapearAResponse(pedido);
     }
 

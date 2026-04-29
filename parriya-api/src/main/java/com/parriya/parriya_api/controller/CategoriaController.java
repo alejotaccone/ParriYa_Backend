@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ public class CategoriaController {
     }   
     
     // Endpoint para crear una categorias
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoriaResponse> createCategoria(@RequestBody CategoriaRequest categoriaRequest) {
         CategoriaResponse response = categoriaService.createCategoria(categoriaRequest);
@@ -47,6 +49,7 @@ public class CategoriaController {
     }
 
     // Endpoint para actualizar una categoría 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCategoria(
             @PathVariable Long id,
@@ -60,6 +63,7 @@ public class CategoriaController {
     }
 
     // Endpoint para eliminar una categoría por su ID
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCategoria(@PathVariable Long id) {
         Optional<CategoriaResponse> categoria = categoriaService.getCategoriaPorId(id);
