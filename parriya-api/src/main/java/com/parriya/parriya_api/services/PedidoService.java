@@ -15,6 +15,7 @@ import com.parriya.parriya_api.entidades.Usuario;
 import com.parriya.parriya_api.entidades.dto.DetallePedido.DetallePedidoRequest;
 import com.parriya.parriya_api.entidades.dto.DetallePedido.DetallePedidoResponse;
 import com.parriya.parriya_api.entidades.dto.Pago.PagoResponse;
+import com.parriya.parriya_api.entidades.dto.Pedido.PedidoDashboardResponse;
 import com.parriya.parriya_api.entidades.dto.Pedido.PedidoRequest;
 import com.parriya.parriya_api.entidades.dto.Pedido.PedidoResponse;
 
@@ -85,6 +86,28 @@ public class PedidoService {
         return mapearAResponse(guardado);
     }
 
+    public List<PedidoResponse> obtenerTodosLosPedidos() {
+        // Buscamos todos en orden descendente
+        List<Pedido> pedidos = pedidoRepository.findAllByOrderByIdDesc();
+        
+        List<PedidoResponse> respuestas = new ArrayList<>();
+        for (Pedido p : pedidos) {
+            respuestas.add(mapearAResponse(p));
+        }
+        return respuestas;
+    }
+
+    public List<PedidoResponse> obtenerPedidosPorUsuario(Long usuarioId) {
+        // 1. Buscamos en la DB
+        List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByIdDesc(usuarioId);
+        
+        // 2. Mapeamos a la lista de respuestas
+        List<PedidoResponse> respuestas = new ArrayList<>();
+        for (Pedido p : pedidos) {
+            respuestas.add(mapearAResponse(p));
+        }
+        return respuestas;
+    }
     // Para ver el detalle exacto de una venta (ej: cuando el cliente va a pagar)
     public PedidoResponse obtenerPedidoPorId(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
@@ -118,6 +141,46 @@ public class PedidoService {
         Pedido guardado = pedidoRepository.save(pedido);
 
         return mapearAResponse(guardado);
+    }
+    @Transactional
+    public PedidoResponse entregarPedido(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+
+        // Reglas de negocio
+        if (pedido.getEstado().equals("CANCELADO")) {
+            throw new RuntimeException("No se puede marcar como entregado un pedido cancelado.");
+        }
+        if (pedido.getEstado().equals("ENTREGADO")) {
+            throw new RuntimeException("Este pedido ya fue entregado anteriormente.");
+        }
+
+        // Actualizamos el estado
+        pedido.setEstado("ENTREGADO");
+        Pedido guardado = pedidoRepository.save(pedido);
+
+        // Devolvemos el DTO actualizado
+        return mapearAResponse(guardado);
+    }
+
+    public List<PedidoDashboardResponse> obtenerUltimosPedidos() {
+        
+        // ACÁ ESTÁ EL CAMBIO: Excluimos los cancelados
+        List<Pedido> ultimosPedidos = pedidoRepository.findTop5ByEstadoNotOrderByIdDesc("CANCELADO");
+        
+        List<PedidoDashboardResponse> respuestas = new ArrayList<>();
+        
+        for (Pedido p : ultimosPedidos) {
+            PedidoDashboardResponse dto = new PedidoDashboardResponse();
+            dto.setId(p.getId()); 
+            dto.setNombreCliente(p.getUsuario().getNombre()); 
+            dto.setEstado(p.getEstado()); 
+            dto.setPrecio(p.getTotal());
+            
+            respuestas.add(dto);
+        }
+        
+        return respuestas;
     }
 
     // --- TRADUCTOR A DTO ---

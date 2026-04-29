@@ -1,6 +1,7 @@
 package com.parriya.parriya_api.controller;
 
 import com.parriya.parriya_api.entidades.Reserva;
+import com.parriya.parriya_api.entidades.dto.Reserva.ReservaDashboardResponse;
 import com.parriya.parriya_api.entidades.dto.Reserva.ReservaDelDiaResponse;
 import com.parriya.parriya_api.entidades.dto.Reserva.ReservaRequest;
 import com.parriya.parriya_api.services.ReservaService;
@@ -56,5 +57,10 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.cancelarReserva(id));
     }
 
+    @GetMapping("/dashboard/hoy")
+    public ResponseEntity<List<ReservaDashboardResponse>> obtenerReservasDashboard() {
+        List<ReservaDashboardResponse> reservas = reservaService.obtenerProximasReservasDashboard();
+        return ResponseEntity.ok(reservas);
+    }
     
 }

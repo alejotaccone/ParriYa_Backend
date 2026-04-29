@@ -16,4 +16,4 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     // Busca por nombre (usamos Containing para que busque coincidencias parciales)
     List<Reserva> findByNombreCliente(String nombre);
     
-} 
+    List<Reserva> findTop5ByFechaDeReservaAndEstadoOrderByHorarioDeReservaAsc(LocalDate fecha, String estado);} 

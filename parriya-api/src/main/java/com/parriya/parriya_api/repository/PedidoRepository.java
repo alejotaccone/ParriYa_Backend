@@ -11,6 +11,8 @@ import com.parriya.parriya_api.entidades.Usuario;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
+        List<Pedido> findAllByOrderByIdDesc();
         List<Pedido> findByEstado(String estado);
-
+        List<Pedido> findByUsuarioIdOrderByIdDesc(Long usuarioId);
+        List<Pedido> findTop5ByEstadoNotOrderByIdDesc(String estado);
 }

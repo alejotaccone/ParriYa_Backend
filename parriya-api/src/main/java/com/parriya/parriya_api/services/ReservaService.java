@@ -2,6 +2,7 @@ package com.parriya.parriya_api.services;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.parriya.parriya_api.entidades.Reserva;
 import com.parriya.parriya_api.entidades.dto.Reserva.ReservaRequest;
+import com.parriya.parriya_api.entidades.dto.Reserva.ReservaDashboardResponse;
 import com.parriya.parriya_api.entidades.dto.Reserva.ReservaDelDiaResponse;
 
 import com.parriya.parriya_api.repository.ReservaRepository;
@@ -72,7 +74,7 @@ public class ReservaService {
     }
 
     public ReservaDelDiaResponse obtenerReservasDivididasPorTurno(LocalDate fecha) {
-List<Reserva> todasLasReservas = reservaRepository.findByFechaDeReserva(fecha);
+    List<Reserva> todasLasReservas = reservaRepository.findByFechaDeReserva(fecha);
         
         ReservaDelDiaResponse respuesta = new ReservaDelDiaResponse();
         LocalTime horaDeCorte = LocalTime.of(19, 0); 
@@ -94,5 +96,26 @@ List<Reserva> todasLasReservas = reservaRepository.findByFechaDeReserva(fecha);
         respuesta.setTotalPersonas(sumaPersonas);
         
         return respuesta;
+    }
+
+    public List<ReservaDashboardResponse> obtenerProximasReservasDashboard() {
+        LocalDate hoy = LocalDate.now();
+        
+        // ACÁ ESTÁ EL CAMBIO: Le pasamos la fecha y el estado que queremos
+        List<Reserva> proximas = reservaRepository
+                .findTop5ByFechaDeReservaAndEstadoOrderByHorarioDeReservaAsc(hoy, "CONFIRMADA");
+        
+        List<ReservaDashboardResponse> respuestas = new ArrayList<>();
+        
+        for (Reserva r : proximas) {
+            ReservaDashboardResponse dto = new ReservaDashboardResponse();
+            dto.setHorario(r.getHorarioDeReserva());
+            dto.setNombreCliente(r.getNombreCliente());
+            dto.setCantidadPersonas(r.getCantidadDePersonas());
+            
+            respuestas.add(dto);
+        }
+        
+        return respuestas;
     }
 }
