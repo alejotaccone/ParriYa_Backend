@@ -19,6 +19,9 @@ import com.parriya.parriya_api.entidades.dto.Categoria.CategoriaRequest;
 import com.parriya.parriya_api.entidades.dto.Categoria.CategoriaResponse;
 import com.parriya.parriya_api.services.CategoriaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/categorias")
 public class CategoriaController {
@@ -27,12 +30,20 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     // Endpoint para obtener todas las categorias
+    @Operation(
+        summary = "Obtener categorias",
+        description = "Devuelve la lista de todas las categorias"
+    )
     @GetMapping
     public ResponseEntity<List<CategoriaResponse>> getCategorias(){
         return ResponseEntity.ok(categoriaService.getCategorias());
     }
 
     // Endpoint para obtener una categorias por ID
+    @Operation(
+        summary = "Obtener categoria por ID",
+        description = "Devuelve los datos de una categoria específica por su ID"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaResponse> getCategoriaPorId(@PathVariable Long id){
         return categoriaService.getCategoriaPorId(id)
@@ -41,6 +52,10 @@ public class CategoriaController {
     }   
     
     // Endpoint para crear una categorias
+    @Operation(
+        summary = "Crear categoria",
+        description = "Crea una nueva categoria"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoriaResponse> createCategoria(@RequestBody CategoriaRequest categoriaRequest) {
@@ -49,6 +64,10 @@ public class CategoriaController {
     }
 
     // Endpoint para actualizar una categoría 
+    @Operation(
+        summary = "Actualizar categoria",
+        description = "Actualiza los datos de una categoria específica por su ID"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCategoria(
@@ -63,6 +82,10 @@ public class CategoriaController {
     }
 
     // Endpoint para eliminar una categoría por su ID
+    @Operation(
+        summary = "Eliminar categoria",
+        description = "Elimina una categoria específica por su ID"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteCategoria(@PathVariable Long id) {

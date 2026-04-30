@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -22,6 +25,10 @@ public class PedidoController {
 
 
     // Endpoint para traer todos los pedidos ordenados
+    @Operation(
+        summary = "Obtener todos los pedidos",
+        description = "Devuelve la lista de todos los pedidos"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> obtenerTodos() {
@@ -29,6 +36,10 @@ public class PedidoController {
     }
 
     // 1. Crear un pedido nuevo (Acá entra el carrito con el pago)
+    @Operation(
+        summary = "Crear nuevo pedido",
+        description = "Crea un nuevo pedido con los datos del carrito y el pago"
+    )
     @PostMapping
     public ResponseEntity<PedidoResponse> crearPedido(@RequestBody PedidoRequest request) {
         PedidoResponse response = pedidoService.crearPedido(request);
@@ -36,6 +47,10 @@ public class PedidoController {
     }
 
     // 2. Traer un pedido específico por su ID (Para ver el ticket)
+    @Operation(
+        summary = "Obtener pedido por ID",
+        description = "Devuelve los datos de un pedido específico por su ID"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> obtenerPedido(@PathVariable Long id) {
         PedidoResponse response = pedidoService.obtenerPedidoPorId(id);
@@ -43,6 +58,10 @@ public class PedidoController {
     }
 
     // Ya no pedimos el {usuarioId} en el path, es una ruta genérica
+    @Operation(
+        summary = "Obtener mis pedidos",
+        description = "Devuelve la lista de pedidos del usuario logueado"
+    )
     @GetMapping("/mis-pedidos")
     public ResponseEntity<List<PedidoResponse>> obtenerMisPedidos() {
         String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -52,6 +71,10 @@ public class PedidoController {
     }
 
     // 3. Traer la lista de pedidos según su estado (Para la tablet de la cocina)
+    @Operation(
+        summary = "Obtener pedidos por estado",
+        description = "Devuelve la lista de pedidos según su estado"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<PedidoResponse>> obtenerPedidosPorEstado(@PathVariable String estado) {
@@ -59,6 +82,10 @@ public class PedidoController {
         return new ResponseEntity<>(respuestas, HttpStatus.OK);
     }
 
+    @Operation(
+        summary = "Obtener los últimos pedidos para el dashboard",
+        description = "Devuelve la lista de los últimos pedidos para mostrar en el dashboard del admin"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/dashboard")
     public ResponseEntity<List<PedidoDashboardResponse>> obtenerUltimosPedidosDashboard() {
@@ -67,15 +94,21 @@ public class PedidoController {
     }
 
     // 4. Cancelar un pedido
+    @Operation(
+        summary = "Cancelar pedido",
+        description = "Cancela un pedido existente por su ID"
+    )
     @PutMapping("/{id}/cancelar")
     public ResponseEntity<PedidoResponse> cancelarPedido(@PathVariable Long id) {
         PedidoResponse response = pedidoService.cancelarPedido(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-
     //Confirmar entrega de un pedido
+    @Operation(
+        summary = "Confirmar entrega de pedido",
+        description = "Confirma la entrega de un pedido existente por su ID"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}/entregar")
     public ResponseEntity<PedidoResponse> entregarPedido(@PathVariable Long id) {

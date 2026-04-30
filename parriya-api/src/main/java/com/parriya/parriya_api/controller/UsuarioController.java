@@ -13,6 +13,9 @@ import com.parriya.parriya_api.entidades.dto.Usuario.CambiarPasswordRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UpdatePerfilRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/usuario") 
 public class UsuarioController {
@@ -26,6 +29,10 @@ public class UsuarioController {
     }
 
     // Endpoint para obtener MI perfil
+    @Operation(
+        summary = "Obtener perfil del usuario",
+        description = "Devuelve los datos de contacto y rol del usuario logueado usando su token JWT"
+    )
     @GetMapping("/perfil")
     public ResponseEntity<UsuarioResponse> getMiPerfil() {
         return usuarioService.getMiPerfil(getEmailAutenticado())
@@ -34,6 +41,10 @@ public class UsuarioController {
     }
 
     // Endpoint exclusivo para actualizar MIS datos de contacto
+    @Operation(
+        summary = "Actualizar perfil del usuario",
+        description = "Actualiza los datos de contacto del usuario logueado usando su token JWT"
+    )
     @PutMapping("/perfil")
     public ResponseEntity<Object> updatePerfil(@RequestBody UpdatePerfilRequest request) {
         try {
@@ -45,6 +56,10 @@ public class UsuarioController {
     }
 
     // Endpoint para cambiar MI contraseña
+    @Operation(
+        summary = "Cambiar contraseña del usuario",
+        description = "Cambia la contraseña del usuario logueado usando su token JWT"
+    )
     @PutMapping("/password")
     public ResponseEntity<Object> cambiarPassword(@RequestBody CambiarPasswordRequest request) {
         try {
@@ -56,6 +71,10 @@ public class UsuarioController {
     }
 
     // Endpoint para prender/apagar un favorito MÍO
+    @Operation(
+        summary = "Gestionar favorito",
+        description = "Agrega o quita un producto de la lista de favoritos del usuario logueado usando su token JWT"
+    )
     @PostMapping("/favoritos/{productoId}")
     public ResponseEntity<String> gestionarFavorito(@PathVariable Long productoId) {
         usuarioService.toggleFavorito(getEmailAutenticado(), productoId);
@@ -63,6 +82,10 @@ public class UsuarioController {
     }
 
     // Endpoint para mostrar MIS favoritos
+    @Operation(
+        summary = "Obtener favoritos",
+        description = "Devuelve la lista de productos favoritos del usuario logueado usando su token JWT"
+    )
     @GetMapping("/favoritos")
     public ResponseEntity<List<ProductoResponse>> obtenerMisFavoritos() {
         List<ProductoResponse> favoritos = usuarioService.obtenerFavoritos(getEmailAutenticado());

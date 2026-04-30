@@ -21,6 +21,8 @@ import com.parriya.parriya_api.entidades.dto.Producto.ProductoResponse;
 import com.parriya.parriya_api.services.ProductoService;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @RequestMapping("/productos")
@@ -30,12 +32,20 @@ public class ProductoController {
     private ProductoService productoService;
 
     // Endpoint para obtener todas las categorias
+    @Operation(
+        summary = "Obtener productos",
+        description = "Devuelve la lista de todos los productos"
+    )
     @GetMapping
     public ResponseEntity<List<ProductoResponse>> getProductos() {
         return ResponseEntity.ok(productoService.getProductos());
     }
 
     // Endpoint para obtener un producto por ID
+    @Operation(
+        summary = "Obtener producto por ID",
+        description = "Devuelve los datos de un producto específico por su ID"
+    )
     @GetMapping("/{id}")
     public ResponseEntity<ProductoResponse> getProductoPorId(@PathVariable Long id){
         return productoService.getProductoPorId(id)
@@ -44,6 +54,10 @@ public class ProductoController {
     }
 
     // Endpoint para crear un producto
+    @Operation(
+        summary = "Crear producto",
+        description = "Crea un nuevo producto"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductoResponse> createProducto(@RequestBody ProductoRequest productoRequest){
@@ -52,6 +66,10 @@ public class ProductoController {
     }
 
     // Endpoint para actualizar un producto
+    @Operation(
+        summary = "Actualizar producto",
+        description = "Actualiza los datos de un producto existente"
+    )
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProductoResponse> updateProducto(@PathVariable Long id, @RequestBody ProductoRequest productoRequest) {
@@ -64,6 +82,10 @@ public class ProductoController {
     }
 
     // Endpoint para eliminar un producto por su ID
+    @Operation(
+        summary = "Eliminar producto",
+        description = "Elimina un producto existente por su ID"
+    )
     @PreAuthorize("hasRole('ADMIN')")   
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProducto(@PathVariable Long id) {
@@ -75,6 +97,4 @@ public class ProductoController {
             return ResponseEntity.notFound().build(); // 404 Not Found
         }
     }
-
-
 }

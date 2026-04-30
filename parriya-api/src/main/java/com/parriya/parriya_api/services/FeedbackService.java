@@ -32,7 +32,7 @@ public class FeedbackService {
     private UsuarioRepository usuarioRepository; // <-- Agregamos el repositorio de usuarios
 
     @Transactional
-    public Feedback registrarFeedback(FeedbackRequest request) {
+    public FeedbackResponse registrarFeedback(FeedbackRequest request) {
         
         // 1. Obtenemos el email del usuario desde el Token
         String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -62,7 +62,19 @@ public class FeedbackService {
         feedback.setCalificacion(request.getCalificacion());
         feedback.setFecha(LocalDateTime.now());
 
-        return feedbackRepository.save(feedback);
+        Feedback savedFeedback = feedbackRepository.save(feedback);
+        return mapearFeedbackResponse(savedFeedback);
+    }
+
+    private FeedbackResponse mapearFeedbackResponse(Feedback feedback) {
+        FeedbackResponse dto = new FeedbackResponse();
+        dto.setId(feedback.getId());
+        dto.setComentario(feedback.getComentario());
+        dto.setCalificacion(feedback.getCalificacion());
+        dto.setFecha(feedback.getFecha());
+        dto.setPedidoId(feedback.getPedido().getId());
+        dto.setNombreCliente(feedback.getPedido().getUsuario().getNombre());
+        return dto;
     }
 
     // Método para el Dashboard del Admin
