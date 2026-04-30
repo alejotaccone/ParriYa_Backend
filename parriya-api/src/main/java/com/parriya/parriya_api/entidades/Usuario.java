@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class Usuario implements UserDetails { // <-- 1. Implementamos UserDetails
+public class Usuario implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,27 +43,21 @@ public class Usuario implements UserDetails { // <-- 1. Implementamos UserDetail
     private List<Producto> productosFavoritos = new ArrayList<>();
 
 
-    //  MÉTODOS DE USERDETAILS (SPRING SECURITY)
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 2. Spring necesita el prefijo "ROLE_" (ej: ROLE_CLIENTE o ROLE_ADMIN)
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.rol));
     }
 
     @Override
     public String getUsername() {
-        // 3. Le decimos a Spring que el nombre de usuario para el login es el email
         return this.email;
     }
 
     @Override
     public String getPassword() {
-        // 4. Le apuntamos a tu campo "password_hash"
         return this.password_hash;
     }
 
-    // Controles de cuenta activa. Los dejamos en 'true' para que no bloquee los accesos.
     @Override
     public boolean isAccountNonExpired() { return true; }
 

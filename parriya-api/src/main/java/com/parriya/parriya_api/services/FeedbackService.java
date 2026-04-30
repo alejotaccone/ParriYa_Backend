@@ -29,21 +29,18 @@ public class FeedbackService {
     private PedidoRepository pedidoRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository; // <-- Agregamos el repositorio de usuarios
+    private UsuarioRepository usuarioRepository; 
 
     @Transactional
     public FeedbackResponse registrarFeedback(FeedbackRequest request) {
         
-        // 1. Obtenemos el email del usuario desde el Token
         String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
         Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 2. Buscamos el pedido al que le quieren dejar la reseña
         Pedido pedido = pedidoRepository.findById(request.getPedidoId())
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
-        // 3. SEGURIDAD: Comparamos el ID del dueño del pedido con el ID del usuario del Token
         if (!pedido.getUsuario().getId().equals(usuarioAutenticado.getId())) {
             throw new RuntimeException("Acceso denegado: Solo el dueño del pedido puede dejar feedback");
         }
@@ -97,7 +94,6 @@ public class FeedbackService {
             dto.setComentario(f.getComentario());
             dto.setCalificacion(f.getCalificacion());
             dto.setFecha(f.getFecha());
-            // Extraemos los datos precisos sin traer todo el objeto Pedido/Usuario
             dto.setPedidoId(f.getPedido().getId());
             dto.setNombreCliente(f.getPedido().getUsuario().getNombre());
             

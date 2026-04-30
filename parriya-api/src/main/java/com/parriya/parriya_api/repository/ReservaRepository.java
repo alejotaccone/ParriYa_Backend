@@ -11,9 +11,7 @@ import com.parriya.parriya_api.entidades.Reserva;
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     
-    // Busca todas las reservas de un día específico
     List<Reserva> findByFechaDeReserva(LocalDate fecha);    
-    // Busca por nombre (usamos Containing para que busque coincidencias parciales)
     List<Reserva> findByNombreCliente(String nombre);
     
     List<Reserva> findTop5ByFechaDeReservaAndEstadoOrderByHorarioDeReservaAsc(LocalDate fecha, String estado);} 

@@ -55,12 +55,10 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        // Spring Security maneja la validación de la contraseña acá internamente
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        // Si pasa la línea anterior, las credenciales son correctas
         Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 

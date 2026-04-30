@@ -22,7 +22,6 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        // Le enseñamos a Spring a buscar al usuario por email en tu base de datos
         return username -> repository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
@@ -41,7 +40,6 @@ public class ApplicationConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Usamos BCrypt, que es el estándar para encriptar contraseñas
         return new BCryptPasswordEncoder();
     }
 }

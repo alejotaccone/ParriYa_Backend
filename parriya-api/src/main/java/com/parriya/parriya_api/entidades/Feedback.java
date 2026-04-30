@@ -14,7 +14,7 @@ public class Feedback {
     @Column(length = 500)
     private String comentario;
 
-    private Double calificacion; // Ej: 4.5
+    private Double calificacion;
     private LocalDateTime fecha;
 
     @OneToOne

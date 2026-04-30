@@ -35,7 +35,7 @@ public class PedidoController {
         return new ResponseEntity<>(pedidoService.obtenerTodosLosPedidos(), HttpStatus.OK);
     }
 
-    // 1. Crear un pedido nuevo (Acá entra el carrito con el pago)
+    // Crear un pedido nuevo
     @Operation(
         summary = "Crear nuevo pedido",
         description = "Crea un nuevo pedido con los datos del carrito y el pago"
@@ -46,7 +46,7 @@ public class PedidoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // 2. Traer un pedido específico por su ID (Para ver el ticket)
+    // Traer un pedido específico por su ID
     @Operation(
         summary = "Obtener pedido por ID",
         description = "Devuelve los datos de un pedido específico por su ID"

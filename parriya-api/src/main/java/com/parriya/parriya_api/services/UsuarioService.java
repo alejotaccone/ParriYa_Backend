@@ -41,7 +41,6 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        // Si intenta cambiar su email por uno nuevo, validamos que no esté en uso
         if (!usuario.getEmail().equals(request.getEmail())) {
             Optional<Usuario> emailOcupado = usuarioRepository.findByEmail(request.getEmail());
             if (emailOcupado.isPresent()) {
@@ -62,12 +61,10 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        // Comparamos la contraseña plana que manda el usuario con el Hash de la BD
         if (!passwordEncoder.matches(request.getPasswordActual(), usuario.getPassword_hash())) {
             throw new Exception("La contraseña actual es incorrecta.");
         }
 
-        // Si es correcta, encriptamos la nueva y la guardamos
         usuario.setPassword_hash(passwordEncoder.encode(request.getPasswordNuevo()));
         usuarioRepository.save(usuario);
     }
@@ -80,7 +77,6 @@ public class UsuarioService {
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        // Si el producto ya está en la lista lo saca, si no se agrega.
         if (usuario.getProductosFavoritos().contains(producto)) {
             usuario.getProductosFavoritos().remove(producto);
         } else {

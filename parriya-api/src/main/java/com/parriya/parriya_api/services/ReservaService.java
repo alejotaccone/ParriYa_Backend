@@ -32,7 +32,7 @@ public class ReservaService {
         reserva.setHorarioDeReserva(request.getHorarioDeReserva());
         reserva.setUbicacion(request.getUbicacion().toUpperCase());
         
-        // Estado inicial para una carga manual
+        // Estado inicial
         reserva.setEstado("CONFIRMADA"); 
 
         return reservaRepository.save(reserva);
@@ -43,7 +43,7 @@ public class ReservaService {
         return reservaRepository.findAll();
     }
 
-    //traer las reservas por nombre del cliente
+    // Traer las reservas por nombre del cliente
     public List<Reserva> buscarPorNombre(String nombre) {
         return reservaRepository.findByNombreCliente(nombre);
     }
@@ -91,7 +91,6 @@ public class ReservaService {
             }
         }
         
-        // Seteamos los totales antes de devolver
         respuesta.setTotalReservas(todasLasReservas.size());
         respuesta.setTotalPersonas(sumaPersonas);
         
@@ -101,7 +100,6 @@ public class ReservaService {
     public List<ReservaDashboardResponse> obtenerProximasReservasDashboard() {
         LocalDate hoy = LocalDate.now();
         
-        // ACÁ ESTÁ EL CAMBIO: Le pasamos la fecha y el estado que queremos
         List<Reserva> proximas = reservaRepository
                 .findTop5ByFechaDeReservaAndEstadoOrderByHorarioDeReservaAsc(hoy, "CONFIRMADA");
         

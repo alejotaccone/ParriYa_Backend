@@ -18,21 +18,19 @@ public class PagoService {
         List<Pago> pagosProcesados = new ArrayList<>();
         double sumaPagos = 0;
 
-        // 1. Recorrer la lista y armar los pagos
         for (PagoRequest req : requests) {
             Pago pago = new Pago();
             pago.setMetodo(req.getMetodo());
             pago.setMonto(req.getMonto());
             pago.setMoneda("ARS");
             pago.setEstado("PAGADO");
-            pago.setFecha_pago(new Date()); // Usando java.util.Date
-            pago.setPedido(pedido); // Fundamental para el Cascade
+            pago.setFecha_pago(new Date());
+            pago.setPedido(pedido);
 
             sumaPagos += req.getMonto();
             pagosProcesados.add(pago);
         }
 
-        // 2. Validar que la suma total de los pagos alcance para pagar la comida
         if (sumaPagos < totalCalculado) {
             throw new RuntimeException("El monto total ingresado ($" + sumaPagos + ") es insuficiente para cubrir el pedido de: $" + totalCalculado);
         }

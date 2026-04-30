@@ -17,11 +17,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // IMPORTANTE: Esta es una clave secreta de ejemplo. 
-    // En producción, esto debería estar en un archivo .env o application.properties
     private static final String SECRET_KEY = "357638792F423F4528482B4D6251655468576D5A7134743777217A25432A462D";
 
-    // 1. Generar el Token al hacer Login
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -30,20 +27,20 @@ public class JwtService {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // El email
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24 * 10)) // Expira en 10 días
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24 * 10))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // 2. Validar si el token es legítimo
+    // Validar si el token es legítimo
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    // 3. Extraer el email (username) del token
+    // Extraer el email (username) del token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }

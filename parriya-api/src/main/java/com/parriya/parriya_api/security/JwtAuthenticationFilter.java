@@ -32,32 +32,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 1. Buscamos el encabezado "Authorization" que manda el frontend
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
 
-        // 2. Si no hay encabezado o no empieza con "Bearer ", lo dejamos seguir su camino
-        // (Capaz está intentando hacer un Login o registrarse, donde no se necesita token)
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 3. Extraemos el token puro (sacando la palabra "Bearer " que ocupa 7 caracteres)
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
 
-        // 4. Si el token tiene un email y el usuario no está autenticado aún en este hilo
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             
-            // Buscamos al usuario en la base de datos
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-            // 5. Le preguntamos a nuestro JwtService si el token es válido
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 
-                // Si es válido, creamos el "pase VIP" y lo guardamos en el contexto de Spring
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -69,7 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         
-        // 6. Siga siga... pasa al siguiente filtro o al controlador
         filterChain.doFilter(request, response);
     }
 }

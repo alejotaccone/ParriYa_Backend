@@ -42,16 +42,13 @@ public class PedidoService {
 
     @Transactional
     public PedidoResponse crearPedido(PedidoRequest request) {
-        // 1. Obtenemos el email del usuario autenticado leyendo el Token
         String emailAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        // 2. Buscamos a ese usuario real en la base de datos
         Usuario usuario = usuarioRepository.findByEmail(emailAutenticado)
                 .orElseThrow(() -> new RuntimeException("Usuario no autenticado o no encontrado"));
 
-        // 3. Inicializar pedido
         Pedido pedido = new Pedido();
-        pedido.setUsuario(usuario); // ¡Se asigna el usuario del token, sin importar el ID del Request!
+        pedido.setUsuario(usuario);
         pedido.setFecha_pedido(new Date());
         pedido.setHorario_retiro(request.getHorarioRetiro());
         pedido.setEstado("PENDIENTE");
@@ -59,7 +56,6 @@ public class PedidoService {
         double totalPedido = 0;
         List<DetallePedido> detalles = new ArrayList<>();
 
-        // 4. Procesar lista de productos
         for (DetallePedidoRequest item : request.getDetalles()) {
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
@@ -78,12 +74,10 @@ public class PedidoService {
             detalles.add(detalle);
         }
 
-        // Asignar detalles al pedido antes de guardar
         pedido.setDetalles(detalles);
 
         List<Pago> pagosAprobados = pagoService.procesarPagos(request.getPagos(), totalPedido, pedido);
 
-        // Se lo seteás al pedido directamente
         pedido.setPagos(pagosAprobados);
         pedido.setTotal(totalPedido);
         Pedido guardado = pedidoRepository.save(pedido);
@@ -92,7 +86,6 @@ public class PedidoService {
     }
 
     public List<PedidoResponse> obtenerTodosLosPedidos() {
-        // Buscamos todos en orden descendente
         List<Pedido> pedidos = pedidoRepository.findAllByOrderByIdDesc();
         
         List<PedidoResponse> respuestas = new ArrayList<>();
@@ -103,21 +96,17 @@ public class PedidoService {
     }
 
     public List<PedidoResponse> obtenerMisPedidos(String email) {
-        // 1. Buscamos al usuario por su email seguro
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // 2. Buscamos en la DB usando el ID real de ese usuario
         List<Pedido> pedidos = pedidoRepository.findByUsuarioIdOrderByIdDesc(usuario.getId());
         
-        // 3. Mapeamos a la lista de respuestas
         List<PedidoResponse> respuestas = new ArrayList<>();
         for (Pedido p : pedidos) {
             respuestas.add(mapearAResponse(p));
         }
         return respuestas;
     }
-    // Para ver el detalle exacto de una venta (ej: cuando el cliente va a pagar)
     public PedidoResponse obtenerPedidoPorId(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
@@ -136,7 +125,6 @@ public class PedidoService {
         return mapearAResponse(pedido);
     }
 
-    // Para la pantalla del cocinero o el administrador
     public List<PedidoResponse> obtenerPedidosPorEstado(String estado) {
         List<Pedido> pedidos = pedidoRepository.findByEstado(estado.toUpperCase());
         
@@ -152,12 +140,10 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
 
-        // Regla de negocio: solo se puede cancelar si el pedido recién entró
         if (!pedido.getEstado().equals("PENDIENTE")) {
             throw new RuntimeException("No se puede cancelar un pedido que se encuentra en estado: " + pedido.getEstado());
         }
 
-        // Aplicamos el Soft Delete
         pedido.setEstado("CANCELADO");
         Pedido guardado = pedidoRepository.save(pedido);
 
@@ -168,7 +154,6 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
 
-        // Reglas de negocio
         if (pedido.getEstado().equals("CANCELADO")) {
             throw new RuntimeException("No se puede marcar como entregado un pedido cancelado.");
         }
@@ -176,17 +161,14 @@ public class PedidoService {
             throw new RuntimeException("Este pedido ya fue entregado anteriormente.");
         }
 
-        // Actualizamos el estado
         pedido.setEstado("ENTREGADO");
         Pedido guardado = pedidoRepository.save(pedido);
 
-        // Devolvemos el DTO actualizado
         return mapearAResponse(guardado);
     }
 
     public List<PedidoDashboardResponse> obtenerUltimosPedidos() {
         
-        // ACÁ ESTÁ EL CAMBIO: Excluimos los cancelados
         List<Pedido> ultimosPedidos = pedidoRepository.findTop5ByEstadoNotOrderByIdDesc("CANCELADO");
         
         List<PedidoDashboardResponse> respuestas = new ArrayList<>();
@@ -204,13 +186,13 @@ public class PedidoService {
         return respuestas;
     }
 
-    // --- TRADUCTOR A DTO ---
+    // TRADUCTOR A DTO
     private PedidoResponse mapearAResponse(Pedido pedido) {
         PedidoResponse response = new PedidoResponse();
         response.setId(pedido.getId());
         response.setUsuarioId(pedido.getUsuario().getId());
         response.setNombreUsuario(pedido.getUsuario().getNombre());
-        response.setFechaPedido(pedido.getFecha_pedido()); // Cuidado acá: Date a Date
+        response.setFechaPedido(pedido.getFecha_pedido());
         response.setHorarioRetiro(pedido.getHorario_retiro());
         response.setEstado(pedido.getEstado());
         response.setTotal(pedido.getTotal());
