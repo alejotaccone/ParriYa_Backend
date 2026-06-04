@@ -45,7 +45,7 @@ public class FeedbackService {
             throw new RuntimeException("Acceso denegado: Solo el dueño del pedido puede dejar feedback");
         }
 
-        if (!pedido.getEstado().equals("ENTREGADO")) {
+        if (!pedido.getEstado().equals("ENTREGADO") && !pedido.getEstado().equals("FINALIZADO")) {
             throw new RuntimeException("Solo podés dejar feedback de pedidos entregados");
         }
 

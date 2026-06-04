@@ -65,6 +65,10 @@ public class UsuarioService {
             throw new Exception("La contraseña actual es incorrecta.");
         }
 
+        if (passwordEncoder.matches(request.getPasswordNuevo(), usuario.getPassword_hash())) {
+            throw new Exception("La nueva contraseña no puede ser igual a la contraseña actual.");
+        }
+
         usuario.setPassword_hash(passwordEncoder.encode(request.getPasswordNuevo()));
         usuarioRepository.save(usuario);
     }
