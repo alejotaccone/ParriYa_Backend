@@ -14,4 +14,6 @@ public class ReservaRequest {
     private LocalDate fechaDeReserva;
     private LocalTime horarioDeReserva;
     private String ubicacion; // "ADENTRO" o "AFUERA"
+    private String estado; // "CONFIRMADA" o "CANCELADA"
 }
+

@@ -69,6 +69,9 @@ public class ReservaService {
         reserva.setFechaDeReserva(request.getFechaDeReserva());
         reserva.setHorarioDeReserva(request.getHorarioDeReserva());
         reserva.setUbicacion(request.getUbicacion().toUpperCase());
+        if (request.getEstado() != null) {
+            reserva.setEstado(request.getEstado().toUpperCase());
+        }
         
         return reservaRepository.save(reserva);
     }

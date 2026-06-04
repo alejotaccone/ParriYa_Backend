@@ -116,4 +116,15 @@ public class PedidoController {
         PedidoResponse response = pedidoService.entregarPedido(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Operation(
+        summary = "Actualizar estado de pedido",
+        description = "Actualiza el estado de un pedido existente (ADMIN)"
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<PedidoResponse> actualizarEstado(@PathVariable Long id, @RequestParam String nuevoEstado) {
+        PedidoResponse response = pedidoService.actualizarEstado(id, nuevoEstado);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

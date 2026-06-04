@@ -167,6 +167,15 @@ public class PedidoService {
         return mapearAResponse(guardado);
     }
 
+    @Transactional
+    public PedidoResponse actualizarEstado(Long id, String nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+        pedido.setEstado(nuevoEstado.toUpperCase());
+        Pedido guardado = pedidoRepository.save(pedido);
+        return mapearAResponse(guardado);
+    }
+
     public List<PedidoDashboardResponse> obtenerUltimosPedidos() {
         
         List<Pedido> ultimosPedidos = pedidoRepository.findTop5ByEstadoNotOrderByIdDesc("CANCELADO");
