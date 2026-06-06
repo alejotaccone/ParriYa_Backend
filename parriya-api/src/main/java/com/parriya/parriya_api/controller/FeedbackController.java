@@ -26,6 +26,7 @@ public class FeedbackController {
     @Autowired
     private FeedbackService feedbackService;
 
+    // Endpoint crear enviar feedback
     @Operation(
         summary = "Crear feedback",
         description = "Crea un nuevo feedback con los datos proporcionados"
