@@ -22,4 +22,5 @@ public class PedidoResponse {
     private double total;
     private List<DetallePedidoResponse> detalles;
     private List<PagoResponse> pagos;
+    private boolean tieneFeedback;
 }

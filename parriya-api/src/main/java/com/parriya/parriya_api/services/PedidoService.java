@@ -22,6 +22,7 @@ import com.parriya.parriya_api.entidades.dto.Pedido.PedidoResponse;
 import com.parriya.parriya_api.repository.PedidoRepository;
 import com.parriya.parriya_api.repository.ProductoRepository;
 import com.parriya.parriya_api.repository.UsuarioRepository;
+import com.parriya.parriya_api.repository.FeedbackRepository;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -39,6 +40,9 @@ public class PedidoService {
 
     @Autowired
     private PagoService pagoService;
+
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     @Transactional
     public PedidoResponse crearPedido(PedidoRequest request) {
@@ -205,6 +209,7 @@ public class PedidoService {
         response.setHorarioRetiro(pedido.getHorario_retiro());
         response.setEstado(pedido.getEstado());
         response.setTotal(pedido.getTotal());
+        response.setTieneFeedback(feedbackRepository.existsByPedidoId(pedido.getId()));
 
         // Mapeo de Detalles
         List<DetallePedidoResponse> detallesDTO = new ArrayList<>();
