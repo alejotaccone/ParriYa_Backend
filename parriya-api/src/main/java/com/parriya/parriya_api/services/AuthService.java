@@ -30,6 +30,12 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     public AuthResponse registrar(RegistroRequest request) {
+        // Validamos que la contraseña no sea igual al email ni al nombre
+        if (request.getPassword().trim().equalsIgnoreCase(request.getEmail().trim()) ||
+            request.getPassword().trim().equalsIgnoreCase(request.getNombre().trim())) {
+            throw new RuntimeException("La contraseña no puede ser igual al correo electrónico o al nombre");
+        }
+
         // Validamos si el email ya existe
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");

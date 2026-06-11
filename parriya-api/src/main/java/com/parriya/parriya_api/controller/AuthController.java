@@ -4,6 +4,7 @@ import com.parriya.parriya_api.entidades.dto.Auth.AuthResponse;
 import com.parriya.parriya_api.entidades.dto.Auth.LoginRequest;
 import com.parriya.parriya_api.entidades.dto.Auth.RegistroRequest;
 import com.parriya.parriya_api.services.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class AuthController {
         description = "Crea un nuevo usuario con los datos proporcionados"
     )
     @PostMapping("/registro")
-    public ResponseEntity<AuthResponse> registrar(@RequestBody RegistroRequest request) {
+    public ResponseEntity<AuthResponse> registrar(@Valid @RequestBody RegistroRequest request) {
         return ResponseEntity.ok(authService.registrar(request));
     }
 

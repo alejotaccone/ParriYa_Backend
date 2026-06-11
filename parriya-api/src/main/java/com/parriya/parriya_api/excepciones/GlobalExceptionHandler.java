@@ -1,7 +1,9 @@
 package com.parriya.parriya_api.excepciones;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -10,6 +12,24 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> manejarValidacion(MethodArgumentNotValidException ex) {
+        Map<String, String> respuesta = new HashMap<>();
+        String errorMsg = ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .findFirst()
+                .orElse("Error de validación");
+        respuesta.put("error", errorMsg);
+        return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> manejarViolacionIntegridad(DataIntegrityViolationException ex) {
+        Map<String, String> respuesta = new HashMap<>();
+        respuesta.put("error", "El correo electrónico ya se encuentra registrado.");
+        return new ResponseEntity<>(respuesta, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> manejarExcepcion(RuntimeException ex) {
