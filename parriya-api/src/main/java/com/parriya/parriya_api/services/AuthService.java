@@ -41,6 +41,11 @@ public class AuthService {
             throw new RuntimeException("El email ya está registrado");
         }
 
+        // Validamos si el nombre de usuario ya existe
+        if (usuarioRepository.findByNombre(request.getNombre()).isPresent()) {
+            throw new RuntimeException("El nombre de usuario ya está registrado");
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setEmail(request.getEmail());
@@ -65,7 +70,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())
+        Usuario usuario = usuarioRepository.findByEmailOrNombre(request.getEmail(), request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         String token = jwtService.generateToken(usuario);

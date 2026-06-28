@@ -10,5 +10,7 @@ import com.parriya.parriya_api.entidades.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByNombre(String nombre);
+    Optional<Usuario> findByEmailOrNombre(String email, String nombre);
 
 }

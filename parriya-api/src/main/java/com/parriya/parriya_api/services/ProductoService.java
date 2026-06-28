@@ -31,7 +31,6 @@ public class ProductoService {
             request.getNombre(),
             request.getDescripcion(),
             request.getPrecio(),
-            request.getStock(),
             request.getImgUrl(),
             categoria);
         Producto guardada = productoRepository.save(nuevoProducto);
@@ -65,7 +64,6 @@ public class ProductoService {
         producto.setNombre(request.getNombre());
         producto.setDescripcion(request.getDescripcion());
         producto.setPrecio(request.getPrecio());
-        producto.setStock(request.getStock());
         producto.setImgUrl(request.getImgUrl());
         producto.setCategoria(categoria);
         Producto actualizada = productoRepository.save(producto);
@@ -80,7 +78,6 @@ public class ProductoService {
         response.setNombre(producto.getNombre());
         response.setDescripcion(producto.getDescripcion());
         response.setPrecio(producto.getPrecio());
-        response.setStock(producto.getStock());
         response.setEstado(true);
         response.setImgUrl(producto.getImgUrl());
         if (producto.getCategoria() != null) {

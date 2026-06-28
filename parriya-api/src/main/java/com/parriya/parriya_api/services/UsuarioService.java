@@ -102,7 +102,6 @@ public class UsuarioService {
             pRes.setNombre(p.getNombre());
             pRes.setDescripcion(p.getDescripcion());
             pRes.setPrecio(p.getPrecio());
-            pRes.setStock(p.getStock());
             pRes.setEstado(p.isEstado());
             pRes.setImgUrl(p.getImgUrl());
             pRes.setCategoriaId(p.getCategoria().getId());
