@@ -20,14 +20,14 @@ import com.parriya.parriya_api.entidades.dto.Categoria.CategoriaResponse;
 import com.parriya.parriya_api.services.CategoriaService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/categorias")
+@RequiredArgsConstructor
 public class CategoriaController {
     
-    @Autowired
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
 
     // Endpoint para obtener todas las categorias
     @Operation(

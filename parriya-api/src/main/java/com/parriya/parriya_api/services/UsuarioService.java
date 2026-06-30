@@ -19,17 +19,17 @@ import com.parriya.parriya_api.entidades.dto.Usuario.CambiarPasswordRequest;
 import com.parriya.parriya_api.repository.ProductoRepository;
 import com.parriya.parriya_api.repository.UsuarioRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // Obtener "Mi Perfil" buscando por email
     public Optional<UsuarioResponse> getMiPerfil(String email) {

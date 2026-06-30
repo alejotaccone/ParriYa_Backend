@@ -15,21 +15,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.parriya.parriya_api.entidades.dto.Categoria.CategoriaResponse;
 import com.parriya.parriya_api.entidades.dto.Producto.ProductoRequest;
 import com.parriya.parriya_api.entidades.dto.Producto.ProductoResponse;
 import com.parriya.parriya_api.services.ProductoService;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/productos")
+@RequiredArgsConstructor
 public class ProductoController {
     
-    @Autowired
-    private ProductoService productoService;
+    private final ProductoService productoService;
 
     // Endpoint para obtener todas las categorias
     @Operation(

@@ -16,15 +16,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/reservas")
+@RequiredArgsConstructor
 public class ReservaController {
 
-    @Autowired
-    private ReservaService reservaService;
+    private final ReservaService reservaService;
 
     // Endpoint para obtener todas las reservas
     @Operation(

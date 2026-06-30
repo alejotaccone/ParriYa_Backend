@@ -14,14 +14,14 @@ import com.parriya.parriya_api.entidades.dto.Usuario.UpdatePerfilRequest;
 import com.parriya.parriya_api.entidades.dto.Usuario.UsuarioResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/usuario") 
+@RequestMapping("/usuario")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     // Método auxiliar para no repetir código en cada endpoint
     private String getEmailAutenticado() {

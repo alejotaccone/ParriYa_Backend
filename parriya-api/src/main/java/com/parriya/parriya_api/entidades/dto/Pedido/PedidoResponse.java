@@ -4,8 +4,6 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
-import com.parriya.parriya_api.entidades.DetallePedido;
-import com.parriya.parriya_api.entidades.Pago;
 import com.parriya.parriya_api.entidades.dto.DetallePedido.DetallePedidoResponse;
 import com.parriya.parriya_api.entidades.dto.Pago.PagoResponse;
 

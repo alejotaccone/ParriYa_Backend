@@ -17,14 +17,14 @@ import com.parriya.parriya_api.entidades.dto.Feedback.FeedbackResponse;
 import com.parriya.parriya_api.services.*;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/feedback")
+@RequiredArgsConstructor
 public class FeedbackController {
 
-    @Autowired
-    private FeedbackService feedbackService;
+    private final FeedbackService feedbackService;
 
     // Endpoint crear enviar feedback
     @Operation(
