@@ -36,4 +36,25 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
+    @Operation(
+        summary = "Verificar si un email está registrado",
+        description = "Devuelve 200 si el email existe en el sistema, 404 si no está registrado"
+    )
+    @PostMapping("/verificar-email")
+    public ResponseEntity<Void> verificarEmail(@RequestBody LoginRequest request) {
+        return authService.existeEmail(request.getEmail())
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
+    @Operation(
+        summary = "Cambiar contraseña",
+        description = "Actualiza la contraseña del usuario identificado por email"
+    )
+    @PostMapping("/cambiar-password")
+    public ResponseEntity<Void> cambiarPassword(@RequestBody LoginRequest request) {
+        authService.cambiarPassword(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok().build();
+    }
 }

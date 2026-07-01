@@ -79,4 +79,15 @@ public class AuthService {
         response.setToken(token);
         return response;
     }
+
+    public boolean existeEmail(String email) {
+        return usuarioRepository.findByEmail(email).isPresent();
+    }
+
+    public void cambiarPassword(String email, String nuevaPassword) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setPassword_hash(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+    }
 }
